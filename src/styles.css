@@ -1,0 +1,71 @@
+
+.game {
+  display: none;
+  grid-template-columns: 100px 100px 100px;
+  grid-gap: 10px;
+  background-color: #fff;
+  color: #444;
+}
+
+input:checked + .game {
+  display: grid;
+}
+
+input:checked::before {
+  content: attr(id);
+  position: absolute;
+  margin-left: 20px;
+}
+
+label {
+  height: 50px;
+  width: 50px;
+  background-color: #444;
+  color: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  font-size: 150%;
+  cursor: pointer;
+}
+
+
+.game.r1 > label:nth-of-type(1),
+.game.r2 > label:nth-of-type(2),
+.game.r3 > label:nth-of-type(3),
+.game.r4 > label:nth-of-type(4),
+.game.r5 > label:nth-of-type(5),
+.game.r6 > label:nth-of-type(6),
+.game.r7 > label:nth-of-type(7),
+.game.r8 > label:nth-of-type(8),
+.game.r9 > label:nth-of-type(9)
+{
+  background: red;
+  cursor: not-allowed;
+}
+
+.game.g1 > label:nth-of-type(1),
+.game.g2 > label:nth-of-type(2),
+.game.g3 > label:nth-of-type(3),
+.game.g4 > label:nth-of-type(4),
+.game.g5 > label:nth-of-type(5),
+.game.g6 > label:nth-of-type(6),
+.game.g7 > label:nth-of-type(7),
+.game.g8 > label:nth-of-type(8),
+.game.g9 > label:nth-of-type(9)
+{
+  background: green;
+  cursor: not-allowed;
+}
+
+input { 
+  display: none;
+}
+
+.game.winner-r::before {
+  content: 'WINNER IS RED';
+  display: 'block';
+}
+.game.winner-g::before {
+  content: 'WINNER IS GREEN';
+  display: 'block';
+}

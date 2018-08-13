@@ -1,0 +1,20 @@
+{
+  "name": "css-tic-tac-toe",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A game of tic-tac-toe built entirely out of css and html (NO JS!)",
+  "main": "index.js",
+  "scripts": {
+    "dev": "yarn nodemon --watch scripts --watch src --exec \"yarn build && yarn serve\"",
+    "build": "mkdir -p dist && node scripts/build-html.js && cp src/styles.css dist/",
+    "serve": "http-server dist/"
+  },
+  "keywords": [],
+  "author": "Luke Batchelor",
+  "license": "ISC",
+  "dependencies": {
+    "http-server": "^0.11.1",
+    "nodemon": "^1.18.3",
+    "outdent": "^0.5.0"
+  }
+}
