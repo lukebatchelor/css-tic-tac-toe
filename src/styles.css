@@ -1,4 +1,14 @@
 
+body, html {
+  height: 100%;
+}
+.app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
 .game {
   display: none;
   grid-template-columns: 100px 100px 100px;
@@ -17,7 +27,7 @@ input:checked::before {
   margin-left: 20px;
 }
 
-label {
+.game label {
   height: 50px;
   width: 50px;
   background-color: #444;
@@ -28,6 +38,33 @@ label {
   cursor: pointer;
 }
 
+.game.r1 > label:nth-of-type(1)::after,
+.game.r2 > label:nth-of-type(2)::after,
+.game.r3 > label:nth-of-type(3)::after,
+.game.r4 > label:nth-of-type(4)::after,
+.game.r5 > label:nth-of-type(5)::after,
+.game.r6 > label:nth-of-type(6)::after,
+.game.r7 > label:nth-of-type(7)::after,
+.game.r8 > label:nth-of-type(8)::after,
+.game.r9 > label:nth-of-type(9)::after {
+  content: 'X';
+  font-size: 52px;
+  line-height: 52px;
+}
+
+.game.g1 > label:nth-of-type(1)::after,
+.game.g2 > label:nth-of-type(2)::after,
+.game.g3 > label:nth-of-type(3)::after,
+.game.g4 > label:nth-of-type(4)::after,
+.game.g5 > label:nth-of-type(5)::after,
+.game.g6 > label:nth-of-type(6)::after,
+.game.g7 > label:nth-of-type(7)::after,
+.game.g8 > label:nth-of-type(8)::after,
+.game.g9 > label:nth-of-type(9)::after {
+  content: 'O';
+  font-size: 52px;
+  line-height: 52px;
+}
 
 .game.r1 > label:nth-of-type(1),
 .game.r2 > label:nth-of-type(2),
@@ -41,6 +78,7 @@ label {
 {
   background: red;
   cursor: not-allowed;
+
 }
 
 .game.g1 > label:nth-of-type(1),
@@ -57,15 +95,32 @@ label {
   cursor: not-allowed;
 }
 
-input { 
+input {
   display: none;
 }
 
-.game.winner-r::before {
-  content: 'WINNER IS RED';
-  display: 'block';
+#resetButton {
+  margin-top: 10px;
+  border: 1px solid black;
+  border-radius: 4px;
+  padding: 4px;
 }
-.game.winner-g::before {
-  content: 'WINNER IS GREEN';
-  display: 'block';
+
+.game.winner-r::after,
+.game.winner-g::after {
+  grid-column: 1 /4;
+  text-align: center;
+  padding: 6px;
+  border-radius: 4px;
+  color: white;
 }
+.game.winner-r::after {
+  content: 'Winner is: RED!!';
+  background-color: red;
+}
+.game.winner-g::after {
+  content: 'Winner is: GREEN!!';
+  background-color: green;
+}
+
+
