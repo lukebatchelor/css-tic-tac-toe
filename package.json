@@ -5,7 +5,7 @@
   "description": "A game of tic-tac-toe built entirely out of css and html (NO JS!)",
   "main": "index.js",
   "scripts": {
-    "dev": "yarn nodemon --watch scripts --watch src --exec \"yarn build && yarn serve\"",
+    "dev": "yarn nodemon -e js,css --watch scripts --watch src/ --exec \"yarn build && yarn serve\"",
     "build": "mkdir -p dist && node scripts/build-html.js && cp src/styles.css dist/",
     "serve": "http-server dist/"
   },
