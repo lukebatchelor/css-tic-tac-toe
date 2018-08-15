@@ -2,12 +2,45 @@ const fs = require('fs');
 const path = require('path');
 const outdent = require('outdent');
 
-const outputPath = path.join(__dirname, '..', 'dist','2', 'index.html');
+const outputPath = path.join(__dirname, '..', 'dist', 'index.html');
 
 // if we sort the moves in alphabetical order we can ensure that two states
 // that are equivalent become the same state string
 function normaliseState(state) {
   return state.split(' ').sort().join(' ').trim();
+}
+
+function getComputerMove(state) {
+  const moves = state.split(' ');
+  const corners = [1,3,7,9];
+  const edges = [2,4,6,8];
+  const center = [5];
+  const opposites = {
+    'r1': 9,
+    'r3': 7,
+    'r9': 1,
+    'r7': 3,
+    'r2': 8,
+    'r4': 6,
+    'r8': 2
+  }
+
+  if (moves.length === 1) {
+    // if they play center, play an arbitrary corner, else, play center
+    return moves[0] === 'r5' ? 9 : 5;
+  }
+  if (moves.length === 3) {
+    // if they control the center (we must have played 9)...
+    if (moves.indexOf('r5') > -1) {
+      // If they played the opposite corner, we just play a corner (we are going to draw)
+      if (moves.indexOf('r1') > -1) {
+        return 3
+      }
+      // otherwise we need to block (will always be the 'opposite' side than what they just played)
+      const opponentMove = moves.filter(move => ['r5', 'g9'].indexOf(move) === -1)[0];
+      return opposites[opponentMove];
+    }
+  }
 }
 
 function getWinner(state) {
@@ -114,7 +147,7 @@ const htmlTemplate = outdent`
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>CSS Tic Tac Toe</title>
-    <link href="../styles.css" rel="stylesheet"></head>
+    <link href="styles.css" rel="stylesheet"></head>
   </head>
   <body>
   <div class="app">
