@@ -21,6 +21,9 @@ function getWinner(state) {
   if (moves.length < 5) {
     return null;
   }
+  if (moves.length === 9) {
+    return 'd' // it's a draw!
+  }
   for ( const player of players) {
     for (const set of winningSets) {
         if(set.every(move => state.indexOf(`${player}${move}`) !== -1)) {
