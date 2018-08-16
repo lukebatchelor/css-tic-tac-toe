@@ -107,7 +107,8 @@ input {
 }
 
 .game.winner-r::after,
-.game.winner-g::after {
+.game.winner-g::after, 
+.game.winner-d::after {
   grid-column: 1 /4;
   text-align: center;
   padding: 6px;
@@ -115,12 +116,14 @@ input {
   color: white;
 }
 .game.winner-r::after {
-  content: 'Winner is: RED!!';
+  content: 'You win!';
   background-color: red;
 }
 .game.winner-g::after {
-  content: 'Winner is: GREEN!!';
+  content: 'You lost!!';
   background-color: green;
 }
-
-
+.game.winner-d::after {
+  content: 'It\'s a draw!';
+  background-color: #ccc;
+}

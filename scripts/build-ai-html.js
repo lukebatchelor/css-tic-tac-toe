@@ -11,36 +11,64 @@ function normaliseState(state) {
 }
 
 function getComputerMove(state) {
-  const moves = state.split(' ');
-  const corners = [1,3,7,9];
-  const edges = [2,4,6,8];
-  const center = [5];
+  const oppMoves = (state.match(/r([0-9])/g) || []).map(move => move.charAt(1));
+  const ourMoves = (state.match(/g([0-9])/g) || []).map(move => move.charAt(1));
+  const winningSets = [
+    ['1','2','3'], ['4','5','6'], ['7','8','9'], // horizontal
+    ['1','4','7'], ['2','5','8'], ['3','6','9'], // vertical
+    ['1','5','9'], ['7','5','3']           // vertical
+  ];
   const opposites = {
-    'r1': 9,
-    'r3': 7,
-    'r9': 1,
-    'r7': 3,
-    'r2': 8,
-    'r4': 6,
-    'r8': 2
+    '1': '9',
+    '2': '8',
+    '3': '7',
+    '4': '6',
+    '6': '4',
+    '7': '3',
+    '8': '2',
+    '9': '1',
   }
 
-  if (moves.length === 1) {
+  if (oppMoves.length === 1) {
     // if they play center, play an arbitrary corner, else, play center
-    return moves[0] === 'r5' ? 9 : 5;
+    return oppMoves[0] === '5' ? '9' : '5';
   }
-  if (moves.length === 3) {
-    // if they control the center (we must have played 9)...
-    if (moves.indexOf('r5') > -1) {
+  if (oppMoves.length === 2) {
+    // if they control the center (we must have played g9)...
+    if (oppMoves.includes('5')) {
       // If they played the opposite corner, we just play a corner (we are going to draw)
-      if (moves.indexOf('r1') > -1) {
-        return 3
+      if (oppMoves.includes('1')) {
+        return '3'
       }
       // otherwise we need to block (will always be the 'opposite' side than what they just played)
-      const opponentMove = moves.filter(move => ['r5', 'g9'].indexOf(move) === -1)[0];
+      const opponentMove = oppMoves.find(move => move !== '5');
       return opposites[opponentMove];
     }
+    // if they didn't play the center, we know we did ('g5') and we can go on with normal strategy
   }
+  // check if we can win
+  for (let set of winningSets) {
+    const weStillNeed = set.filter(move => ourMoves.indexOf(move) === -1);
+    const oppHas = set.filter(move => oppMoves.indexOf(move) !== -1);
+    // if there is a move the opp can play to win, we block it
+    if (weStillNeed.length === 1 && oppHas.length === 0) {
+      return weStillNeed[0]; // We win!
+    }
+  }
+  // check if we need to block
+  for (let set of winningSets) {
+    const oppStillNeeds = set.filter(move => oppMoves.indexOf(move) === -1);
+    const weHave = set.filter(move => ourMoves.indexOf(move) !== -1);
+    // if there is a move the opp can play to win, we block it
+    if (oppStillNeeds.length === 1 && weHave.length === 0) {
+      return oppStillNeeds[0]
+    }
+  }
+  // otherwise just pick an empty square
+  // console.log('picking empty square for state: ', state );
+  const emptySquares = [1,2,3,4,5,6,7,8,9].filter(sq => state.indexOf(sq) === -1);
+
+  return emptySquares[0];
 }
 
 function getWinner(state) {
@@ -53,6 +81,9 @@ function getWinner(state) {
   const moves = state.split(' ');
   if (moves.length < 5) {
     return null;
+  }
+  if (moves.length === 9) {
+    return 'd' // it's a draw!
   }
   for ( const player of players) {
     for (const set of winningSets) {
@@ -75,7 +106,12 @@ function getBoardForState(state) {
     // A move is only legal if we haven't seen it before (it wont be in the state string)
     const isLegalMove = state.indexOf(possibleMoveIdx) === -1 && !winner;
     if (isLegalMove) {
-      return normaliseState(`${state} ${curPlayer}${possibleMoveIdx}`);
+      const tempState = normaliseState(`${state} ${curPlayer}${possibleMoveIdx}`)
+      const ourMove = getComputerMove(tempState);
+      if (ourMove) {
+        return normaliseState(`${tempState} g${ourMove}`);
+      }
+      return tempState;
     }
     return normalisedState;
   });
@@ -105,11 +141,13 @@ function getNextStates(allStates, curStates, depth) {
   console.log(`depth=${depth}, states=${allStates.size}`);
 
   curStates.forEach(state => {
-    const numMoves = state.split(' ').filter(Boolean);
-    const curPlayer = numMoves.length % 2 === 0 ? 'r' : 'g';
     const legalMoves = getLegalMoves(state);
     legalMoves.forEach(moveIdx => {
-      const newState = normaliseState(`${state} ${curPlayer}${moveIdx}`);
+      let newState = normaliseState(`${state} r${moveIdx}`);
+      const ourMove = getComputerMove(newState);
+      if (ourMove) {
+        newState = normaliseState(`${newState} g${ourMove}`);
+      }
       if (!allStates.has(newState)) {
         newStates.add(newState);
       }
@@ -157,15 +195,15 @@ const htmlTemplate = outdent`
     <br><br>
     <input type="radio" name="game-state" id="start" checked>
     <div class="game">
-      <label for="r1"></label>
-      <label for="r2"></label>
-      <label for="r3"></label>
-      <label for="r4"></label>
-      <label for="r5"></label>
-      <label for="r6"></label>
-      <label for="r7"></label>
-      <label for="r8"></label>
-      <label for="r9"></label>
+      <label for="g5 r1"></label>
+      <label for="g5 r2"></label>
+      <label for="g5 r3"></label>
+      <label for="g5 r4"></label>
+      <label for="g9 r5"></label>
+      <label for="g5 r6"></label>
+      <label for="g5 r7"></label>
+      <label for="g5 r8"></label>
+      <label for="g5 r9"></label>
     </div>
     ${allStateStrings.join('\n')}
     <label for="start" id="resetButton">Reset</label>
