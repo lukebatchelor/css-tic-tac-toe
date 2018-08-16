@@ -41,15 +41,15 @@ function getComputerMove(state) {
         return '3'
       }
       // otherwise we need to block (will always be the 'opposite' side than what they just played)
-      const opponentMove = oppMoves.find(move => move !== '5');
-      return opposites[opponentMove];
+      // const opponentMove = oppMoves.find(move => move !== '5');
+      // return opposites[opponentMove];
     }
     // if they didn't play the center, we know we did ('g5') and we can go on with normal strategy
   }
   // check if we can win
   for (let set of winningSets) {
-    const weStillNeed = set.filter(move => ourMoves.indexOf(move) === -1);
-    const oppHas = set.filter(move => oppMoves.indexOf(move) !== -1);
+    const weStillNeed = set.filter(move => !ourMoves.includes(move));
+    const oppHas = set.filter(move => oppMoves.includes(move));
     // if there is a move the opp can play to win, we block it
     if (weStillNeed.length === 1 && oppHas.length === 0) {
       return weStillNeed[0]; // We win!
@@ -57,8 +57,8 @@ function getComputerMove(state) {
   }
   // check if we need to block
   for (let set of winningSets) {
-    const oppStillNeeds = set.filter(move => oppMoves.indexOf(move) === -1);
-    const weHave = set.filter(move => ourMoves.indexOf(move) !== -1);
+    const oppStillNeeds = set.filter(move => !oppMoves.includes(move));
+    const weHave = set.filter(move => ourMoves.includes(move));
     // if there is a move the opp can play to win, we block it
     if (oppStillNeeds.length === 1 && weHave.length === 0) {
       return oppStillNeeds[0]
@@ -66,7 +66,7 @@ function getComputerMove(state) {
   }
   // otherwise just pick an empty square
   // console.log('picking empty square for state: ', state );
-  const emptySquares = [1,2,3,4,5,6,7,8,9].filter(sq => state.indexOf(sq) === -1);
+  const emptySquares = [1,2,3,4,5,6,7,8,9].filter(sq => !state.includes(sq));
 
   return emptySquares[0];
 }
