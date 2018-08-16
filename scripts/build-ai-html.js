@@ -4,10 +4,10 @@ const path = require('path');
 
 const outputPath = path.join(__dirname, '..', 'dist', 'index.html');
 
-const WINING_SETS = [
+const WINNING_SETS = [
   [1,2,3], [4,5,6], [7,8,9], // horizontal
   [1,4,7], [2,5,8], [3,6,9], // vertical
-  [1,5,9], [7,5,3]           // vertical
+  [1,5,9], [7,5,3]           // diagonal
 ];
 const PLAYER = 'r';
 const COMPUTER = 'g';
@@ -46,7 +46,7 @@ function getComputerMove(state) {
     if (oppMoves.includes(5) && oppMoves.includes(1)) return 3;
   }
   // check if there is a winning move we can make...
-  for (let set of WINING_SETS) {
+  for (let set of WINNING_SETS) {
     const weStillNeed = set.filter(move => !ourMoves.includes(move));
     const oppHas = set.filter(move => oppMoves.includes(move));
     
@@ -55,7 +55,7 @@ function getComputerMove(state) {
     }
   }
   // check if we need to block...
-  for (let set of WINING_SETS) {
+  for (let set of WINNING_SETS) {
     const oppStillNeeds = set.filter(move => !oppMoves.includes(move));
     const weHave = set.filter(move => ourMoves.includes(move));
     
@@ -75,7 +75,7 @@ function getWinner(state) {
   if (oppMoves.length < 3) return null;
   if (oppMoves.length === 5) return 'd'; // it's a draw!
   
-  for (const set of WINING_SETS) {
+  for (const set of WINNING_SETS) {
     if (set.every(move => oppMoves.includes(move))) return PLAYER;
     if (set.every(move => ourMoves.includes(move))) return COMPUTER;
   }

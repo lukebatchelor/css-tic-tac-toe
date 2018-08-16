@@ -4,7 +4,7 @@ const path = require('path');
 
 const outputPath = path.join(__dirname, '..', 'dist','2', 'index.html');
 
-const WINING_SETS = [
+const WINNING_SETS = [
   [1,2,3], [4,5,6], [7,8,9], // horizontal
   [1,4,7], [2,5,8], [3,6,9], // vertical
   [1,5,9], [7,5,3]           // vertical
@@ -22,7 +22,7 @@ function getWinner(state) {
   if (redMoves.length < 3) return null;
   if (redMoves.length === 5) return 'd'; // it's a draw!
   
-  for (const set of WINING_SETS) {
+  for (const set of WINNING_SETS) {
     if (set.every(move => redMoves.includes(move))) return 'r';
     if (set.every(move => greenMoves.includes(move))) return 'g';
   }
