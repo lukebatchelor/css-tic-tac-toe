@@ -2,6 +2,7 @@
 body, html {
   height: 100%;
 }
+
 .app {
   display: flex;
   justify-content: center;
@@ -116,11 +117,11 @@ input {
   color: white;
 }
 .game.winner-r::after {
-  content: 'You win!';
+  content: 'Red wins!';
   background-color: red;
 }
 .game.winner-g::after {
-  content: 'You lost!!';
+  content: 'Green wins!';
   background-color: green;
 }
 .game.winner-d::after {

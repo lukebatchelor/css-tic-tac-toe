@@ -1,8 +1,14 @@
 const fs = require('fs');
 const path = require('path');
-const outdent = require('outdent');
+
 
 const outputPath = path.join(__dirname, '..', 'dist','2', 'index.html');
+
+const WINING_SETS = [
+  [1,2,3], [4,5,6], [7,8,9], // horizontal
+  [1,4,7], [2,5,8], [3,6,9], // vertical
+  [1,5,9], [7,5,3]           // vertical
+];
 
 // if we sort the moves in alphabetical order we can ensure that two states
 // that are equivalent become the same state string
@@ -11,27 +17,31 @@ function normaliseState(state) {
 }
 
 function getWinner(state) {
-  const winningSets = [
-    [1,2,3], [4,5,6], [7,8,9], // horizontal
-    [1,4,7], [2,5,8], [3,6,9], // vertical
-    [1,5,9], [7,5,3]           // vertical
-  ];
-  const players = ['r', 'g'];
-  const moves = state.split(' ');
-  if (moves.length < 5) {
-    return null;
+  const { redMoves, greenMoves } = extractPlayersMoves(state);
+
+  if (redMoves.length < 3) return null;
+  if (redMoves.length === 5) return 'd'; // it's a draw!
+  
+  for (const set of WINING_SETS) {
+    if (set.every(move => redMoves.includes(move))) return 'r';
+    if (set.every(move => greenMoves.includes(move))) return 'g';
   }
-  if (moves.length === 9) {
-    return 'd' // it's a draw!
-  }
-  for ( const player of players) {
-    for (const set of winningSets) {
-        if(set.every(move => state.indexOf(`${player}${move}`) !== -1)) {
-          return player
-        }
-    }
-  }
+  
   return null;
+}
+
+function extractPlayersMoves(state) {
+  const redMoves = (state.match(/r([0-9])/g) || [])
+    .map(move => move.charAt(1))
+    .map(move => parseInt(move, 10));
+  const greenMoves = (state.match(/g([0-9])/g) || [])
+    .map(move => move.charAt(1))
+    .map(move => parseInt(move, 10));
+  
+  return {
+    redMoves,
+    greenMoves
+  }
 }
 
 function getBoardForState(state) {
@@ -52,7 +62,7 @@ function getBoardForState(state) {
 
 
   const winnerClass = winner ? `winner-${winner}` : '';
-  const boardTemplate = outdent`
+  const boardTemplate = `
     <input type="radio" name="game-state" id="${normalisedState}">
     <div class="game ${normalisedState} ${winnerClass}">
       ${nextStates.map(next => `<label for="${next}"></label>`).join('\n  ')}
@@ -100,6 +110,7 @@ function getLegalMoves(state) {
   return [1,2,3,4,5,6,7,8,9].filter(move => state.indexOf(move) === -1);
 }
 
+console.log('~~~~ Building CSS-Tic-Tac-Toe 2 Player... ~~~');
 const startTime = +new Date();
 const allStates = getAllStates();
 const endTime = +new Date();
@@ -109,7 +120,7 @@ console.log('Mapping to board states...');
 const allStatesArr = Array.from(allStates);
 const allStateStrings = allStatesArr.map(getBoardForState);
 
-const htmlTemplate = outdent`
+const htmlTemplate = `
   <!DOCTYPE html>
   <html lang="en">
   <head>
@@ -121,9 +132,9 @@ const htmlTemplate = outdent`
   </head>
   <body>
   <div class="app">
-    <h1>CSS Tic Tac Toe</h1>
+    <h1>2 Player CSS Tic Tac Toe</h1>
     <p>This game is built entirely out of HTML and CSS, no JavaScript™ at all!</p>
-    <p>Check out <a href="https://github.com/lukebatchelor/css-tic-tac-toe">lukebatchelor/css-tic-tac-toe</a> if you're interested in how it works!</p>
+    <p>Or go <a href="/">here</a> to play against a computer!</p>
     <br><br>
     <input type="radio" name="game-state" id="start" checked>
     <div class="game">
@@ -139,6 +150,7 @@ const htmlTemplate = outdent`
     </div>
     ${allStateStrings.join('\n')}
     <label for="start" id="resetButton">Reset</label>
+    <p>Check out <a href="https://github.com/lukebatchelor/css-tic-tac-toe">lukebatchelor/css-tic-tac-toe</a> if you're interested in how it works!</p>
   </div>
   <a href="https://github.com/lukebatchelor/css-tic-tac-toe"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
   </body>

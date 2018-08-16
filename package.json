@@ -7,7 +7,6 @@
   "scripts": {
     "dev": "yarn nodemon -e js,css --watch scripts --watch src/ --exec \"yarn build && yarn serve\"",
     "build": "mkdir -p dist/2 && node scripts/build-html.js && node scripts/build-ai-html.js && cp src/styles.css dist/",
-    "test": "mkdir -p dist/2 && node scripts/build-ai-html.js && cp src/styles.css dist/",
     "serve": "http-server dist/"
   },
   "keywords": [],
@@ -15,7 +14,6 @@
   "license": "ISC",
   "dependencies": {
     "http-server": "^0.11.1",
-    "nodemon": "^1.18.3",
-    "outdent": "^0.5.0"
+    "nodemon": "^1.18.3"
   }
 }
