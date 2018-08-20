@@ -23,12 +23,12 @@ function getWinner(state) {
   const { redMoves, greenMoves } = extractPlayersMoves(state);
 
   if (redMoves.length < 3) return null;
-  if (redMoves.length === 5) return 'd'; // it's a draw!
 
   for (const set of WINNING_SETS) {
     if (set.every(move => redMoves.includes(move))) return 'r';
     if (set.every(move => greenMoves.includes(move))) return 'g';
   }
+  if (redMoves.length === 5) return 'd'; // it's a draw!
 
   return null;
 }
