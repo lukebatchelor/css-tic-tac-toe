@@ -13,7 +13,10 @@ const WINNING_SETS = [
 // if we sort the moves in alphabetical order we can ensure that two states
 // that are equivalent become the same state string
 function normaliseState(state) {
-  return state.split(' ').sort().join(' ').trim();
+  return state.split('-')
+    .filter(Boolean) // remove empty strings, this happens when we pass '-r1' as the state
+    .sort()
+    .join('-');
 }
 
 function getWinner(state) {
@@ -21,12 +24,12 @@ function getWinner(state) {
 
   if (redMoves.length < 3) return null;
   if (redMoves.length === 5) return 'd'; // it's a draw!
-  
+
   for (const set of WINNING_SETS) {
     if (set.every(move => redMoves.includes(move))) return 'r';
     if (set.every(move => greenMoves.includes(move))) return 'g';
   }
-  
+
   return null;
 }
 
@@ -37,7 +40,7 @@ function extractPlayersMoves(state) {
   const greenMoves = (state.match(/g([0-9])/g) || [])
     .map(move => move.charAt(1))
     .map(move => parseInt(move, 10));
-  
+
   return {
     redMoves,
     greenMoves
@@ -47,7 +50,7 @@ function extractPlayersMoves(state) {
 function getBoardForState(state) {
   let nextStates;
   const normalisedState = normaliseState(state);
-  const numMoves = state.split(' ').filter(Boolean);
+  const numMoves = state.split('-').filter(Boolean);
   const curPlayer = numMoves.length % 2 === 0 ? 'r' : 'g';
   const winner = getWinner(state);
 
@@ -55,16 +58,17 @@ function getBoardForState(state) {
     // A move is only legal if we haven't seen it before (it wont be in the state string)
     const isLegalMove = state.indexOf(possibleMoveIdx) === -1 && !winner;
     if (isLegalMove) {
-      return normaliseState(`${state} ${curPlayer}${possibleMoveIdx}`);
+      return normaliseState(`${state}-${curPlayer}${possibleMoveIdx}`);
     }
     return normalisedState;
   });
 
 
   const winnerClass = winner ? `winner-${winner}` : '';
+  const stateClasses = normalisedState.replace(/-/g, ' ');
   const boardTemplate = `
     <input type="radio" name="game-state" id="${normalisedState}">
-    <div class="game ${normalisedState} ${winnerClass}">
+    <div class="game ${stateClasses} ${winnerClass}">
       ${nextStates.map(next => `<label for="${next}"></label>`).join('\n  ')}
     </div>
   `;
@@ -85,11 +89,11 @@ function getNextStates(allStates, curStates, depth) {
   console.log(`depth=${depth}, states=${allStates.size}`);
 
   curStates.forEach(state => {
-    const numMoves = state.split(' ').filter(Boolean);
+    const numMoves = state.split('-').filter(Boolean);
     const curPlayer = numMoves.length % 2 === 0 ? 'r' : 'g';
     const legalMoves = getLegalMoves(state);
     legalMoves.forEach(moveIdx => {
-      const newState = normaliseState(`${state} ${curPlayer}${moveIdx}`);
+      const newState = normaliseState(`${state}-${curPlayer}${moveIdx}`);
       if (!allStates.has(newState)) {
         newStates.add(newState);
       }
