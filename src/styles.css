@@ -79,7 +79,6 @@ input:checked::before {
 {
   background: red;
   cursor: not-allowed;
-
 }
 
 .game.g1 > label:nth-of-type(1),
@@ -108,7 +107,7 @@ input {
 }
 
 .game.winner-r::after,
-.game.winner-g::after, 
+.game.winner-g::after,
 .game.winner-d::after {
   grid-column: 1 /4;
   text-align: center;
