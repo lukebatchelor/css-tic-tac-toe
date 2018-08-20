@@ -110,3 +110,7 @@ After that it simply checks:
 Some things are just worth doing for the sake of doing them and proving to yourself that they are possible!
 
 Also, now no one can complain about the size of my bundles!
+
+---
+
+If you liked this you might also like my [CSS Binary Decoder!](https://github.com/lukebatchelor/css-binary-decoder).
