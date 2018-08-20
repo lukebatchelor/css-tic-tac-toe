@@ -37,6 +37,8 @@ function extractPlayersMoves(state) {
 
 function getComputerMove(state) {
   const { oppMoves, ourMoves } = extractPlayersMoves(state);
+  const winner = getWinner(state);
+  if (winner) return null;
 
   if (oppMoves.length === 5) return null;
   // if they play center, play an arbitrary corner, else, play center
@@ -95,7 +97,7 @@ function getBoardForState(state) {
     // A move is only legal if it hasn't been played before and there is no winner
     const isLegalMove = !state.includes(possibleMoveIdx) && !winner;
     if (isLegalMove) {
-      const tempState = normaliseState(`${state}-${PLAYER}${possibleMoveIdx}`)
+      const tempState = normaliseState(`${state}-${PLAYER}${possibleMoveIdx}`);
       const ourMove = getComputerMove(tempState);
       if (ourMove) {
         return normaliseState(`${tempState}-${COMPUTER}${ourMove}`);
