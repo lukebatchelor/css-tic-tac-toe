@@ -8,7 +8,7 @@ Play against a [computer](https://css-ttt.netlify.com/), or against [a friend](h
 
 # Why?
 
-Well, this started as a proof of concept, I knew I could represent state machines and move between states using HTML and a tiny bit of CSS, but I did't know if it would be possible to store all the states on one page and have the game actually work.
+Well, this started as a [proof of concept](https://codepen.io/hotmilo23/full/mqeVpo/), I knew I could represent state machines and move between states using HTML and a tiny bit of CSS, but I did't know if it would be possible to store all the states on one page and have the game actually work.
 
 It turns out with some creative optimizations, you can represent every game of tic-tac-toe with only **5477** states and your browser can more than handle that! Even better though, we could create an AI version of the game which is able to skip every second *turn*, reducing the total number of states to only **231**!!
 
