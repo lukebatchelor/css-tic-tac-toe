@@ -66,8 +66,8 @@ function getComputerMove(state) {
       return oppStillNeeds[0]
     }
   }
-  // otherwise just pick an empty square
-  const emptySquares = [1,2,3,4,5,6,7,8,9].filter(sq => !state.includes(sq));
+  // otherwise just pick an empty square, preferring a corner first
+  const emptySquares = [5,1,3,7,9,2,4,6,8].filter(sq => !state.includes(sq));
 
   return emptySquares[0];
 }
@@ -76,12 +76,12 @@ function getWinner(state) {
   const { oppMoves, ourMoves } = extractPlayersMoves(state);
 
   if (oppMoves.length < 3) return null;
-  if (oppMoves.length === 5) return 'd'; // it's a draw!
 
   for (const set of WINNING_SETS) {
     if (set.every(move => oppMoves.includes(move))) return PLAYER;
     if (set.every(move => ourMoves.includes(move))) return COMPUTER;
   }
+  if (oppMoves.length === 5) return 'd'; // it's a draw!
 
   return null;
 }
