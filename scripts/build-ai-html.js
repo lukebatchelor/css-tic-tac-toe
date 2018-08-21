@@ -12,11 +12,11 @@ const WINNING_SETS = [
 const PLAYER = 'r';
 const COMPUTER = 'g';
 
-// if we sort the moves in alphabetical order we can ensure that two states
+// If we sort the moves in alphabetical order we can ensure that two states
 // that are equivalent become the same state string
 function normaliseState(state) {
   return state.split('-')
-    .filter(Boolean) // remove empty strings, this happens when we pass '-r1' as the state
+    .filter(Boolean) // Remove empty strings
     .sort()
     .join('-');
 }
@@ -40,18 +40,19 @@ function getComputerMove(state) {
   const winner = getWinner(state);
   if (winner) return null;
 
-  if (oppMoves.length === 5) return null;
-  // if they play center, play an arbitrary corner, else, play center
+  // We partially hardcode the first two moves
+  // If they play center, play an arbitrary corner, else, we play center
   if (oppMoves.length === 1) return oppMoves[0] === 5 ? 9 : 5;
   if (oppMoves.length === 2) {
-    // if they control the center (we must have played g9) the only move we need to consider
-    // is if they played in 1 as it's the only move that doesn't give two in a row
-    // if they do, we arbitraily pick a corner that gives us two in a row (3 in this case)
-    // If not, we can just follow normal strategy
+    // On the second turn, the only special cose we care about is if they
+    // control two opposite corners (we know we must control the center). If
+    // they do, then we MUST force them to block by playing an edge or they
+    // can fork and create two win conditons
     if (oppMoves.includes(1) && oppMoves.includes(9)) return 2;
     if (oppMoves.includes(3) && oppMoves.includes(7)) return 2;
+    // Other than this, we can safely fallback to the default strategy
   }
-  // check if there is a winning move we can make...
+  // If there is a winning move we can make: make it
   for (let set of WINNING_SETS) {
     const weStillNeed = set.filter(move => !ourMoves.includes(move));
     const oppHas = set.filter(move => oppMoves.includes(move));
@@ -60,7 +61,7 @@ function getComputerMove(state) {
       return weStillNeed[0]; // We win!
     }
   }
-  // check if we need to block...
+  // If there is a winning move they can make: block it
   for (let set of WINNING_SETS) {
     const oppStillNeeds = set.filter(move => !oppMoves.includes(move));
     const weHave = set.filter(move => ourMoves.includes(move));
@@ -69,7 +70,7 @@ function getComputerMove(state) {
       return oppStillNeeds[0]
     }
   }
-  // otherwise just pick an empty square, preferring a corner first
+  // Otherwise just pick an empty square, preferring a corner first
   const emptySquares = [5,1,3,7,9,2,4,6,8].filter(sq => !state.includes(sq));
 
   return emptySquares[0];
@@ -84,41 +85,41 @@ function getWinner(state) {
     if (set.every(move => oppMoves.includes(move))) return PLAYER;
     if (set.every(move => ourMoves.includes(move))) return COMPUTER;
   }
-  if (oppMoves.length === 5) return 'd'; // it's a draw!
+  if (oppMoves.length === 5) return 'd'; // It's a draw!
 
   return null;
 }
 
-function getBoardForState(state) {
-  const normalisedState = normaliseState(state);
-  const numMoves = state.split(' ').filter(Boolean);
+function getHtmlForState(state) {
   const winner = getWinner(state);
 
+  // Map over each of the next moves the player can make
   const nextStates = [1,2,3,4,5,6,7,8,9].map(possibleMoveIdx => {
     // A move is only legal if it hasn't been played before and there is no winner
     const isLegalMove = !state.includes(possibleMoveIdx) && !winner;
     if (isLegalMove) {
       const tempState = normaliseState(`${state}-${PLAYER}${possibleMoveIdx}`);
+      // If there was a move the player can make, calculate our counter
       const ourMove = getComputerMove(tempState);
       if (ourMove) {
         return normaliseState(`${tempState}-${COMPUTER}${ourMove}`);
       }
+      // If there is no legal move we can make, then we stay in tempState
       return tempState;
     }
-    return normalisedState;
+    // If the move was not legal, we stay in the current state
+    return state;
   });
 
 
   const winnerClass = winner ? `winner-${winner}` : '';
-  const stateClasses = normalisedState.replace(/-/g, ' ');
+  const stateClasses = state.replace(/-/g, ' ');
 
-  const boardTemplate = `
-    <input type="radio" name="game-state" id="${normalisedState}">
+  const stateHtml = `<input type="radio" name="game-state" id="${state}">
     <div class="game ${stateClasses} ${winnerClass}">
       ${nextStates.map(next => `<label for="${next}"></label>`).join('\n  ')}
-    </div>
-  `;
-  return boardTemplate;
+    </div>`;
+  return stateHtml;
 }
 
 function getAllStates() {
@@ -129,6 +130,7 @@ function getAllStates() {
 
   return allStates;
 }
+
 
 function getNextStates(allStates, curStates, depth) {
   const newStates = new Set();
@@ -172,7 +174,7 @@ const endTime = +new Date();
 console.log('Found ', allStates.size, 'states in ', (endTime - startTime), 'milliseconds');
 console.log('Mapping to board states...');
 const allStatesArr = Array.from(allStates);
-const allStateStrings = allStatesArr.map(getBoardForState);
+const allStateStrings = allStatesArr.map(getHtmlForState);
 
 const htmlTemplate = `
   <!DOCTYPE html>
