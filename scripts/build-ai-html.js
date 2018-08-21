@@ -48,7 +48,8 @@ function getComputerMove(state) {
     // is if they played in 1 as it's the only move that doesn't give two in a row
     // if they do, we arbitraily pick a corner that gives us two in a row (3 in this case)
     // If not, we can just follow normal strategy
-    if (oppMoves.includes(5) && oppMoves.includes(1)) return 3;
+    if (oppMoves.includes(1) && oppMoves.includes(9)) return 2;
+    if (oppMoves.includes(3) && oppMoves.includes(7)) return 2;
   }
   // check if there is a winning move we can make...
   for (let set of WINNING_SETS) {
