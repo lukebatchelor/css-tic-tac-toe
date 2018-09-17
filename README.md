@@ -114,3 +114,9 @@ Also, now no one can complain about the size of my bundles!
 ---
 
 If you liked this you might also like my [CSS Binary Decoder!](https://github.com/lukebatchelor/css-binary-decoder).
+
+
+## Thanks
+
+* [github-corners](https://github.com/tholman/github-corners) by tholman used under [MIT](https://github.com/tholman/github-corners/blob/master/license.md) license
+* [material-design-icons](https://github.com/google/material-design-icons) by Google used under [Apache](https://github.com/google/material-design-icons/blob/master/LICENSE) license
